@@ -1,6 +1,6 @@
 <?php
 // during initial setup set $debug = true
-// accessing tw-receiver-server.php directly (GET Request) will perform some access tests and report
+// accessing tw-receiver-server.php directly (GET Request) will perform some access and configuration tests and report
 // if this is off, most error reporting is disabled throughout
 $debug = true;
 
@@ -306,13 +306,13 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	// not interested in file types other than html
 	if($file_extension != "html" && $file_extension != "htm") {
-		failWithMsg('Server Error: bad file extension');
+		failWithMsg('Server Error: Bad File Extension');
 	}
 	
 	// if file already exists, backup
 	if(file_exists($destinationfile)) {
 		if(!performBackup($destinationfile)  && $backupdir){
-			failWithMsg('Server Error: backup failure');
+			failWithMsg('Server Error: Backup Failure');
 		} 
 	}
 
