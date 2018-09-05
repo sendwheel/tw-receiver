@@ -1,0 +1,7 @@
+# IDE
+.idea/
+
+# project specific
+maintenance
+wiki/
+wiki.html
