@@ -27,7 +27,7 @@ $userpassword = "hello i'm a short friendly password";
 $challengeDigestAuthentication = true;
 
 // enable data integrity signing (recommended)
-// this creates a unique signature of the wiki text and the secret key being passed in
+// this creates a unique signature of the wiki text with the secret key being passed in
 // checking the validity of this signature helps to prevent tampering of the payload mid stream
 $dataIntegritySigning = true;
 
@@ -129,11 +129,9 @@ function authenticateRequest($submittedkey){
 }
 
 function createChallengeToken(){
-
 	// start a session for this request chain
 	session_start();
 	$ctoken = hash("sha256", time()+random_int(100,1999));
-	//$ctoken = hash("sha256", $iterator . gmdate('YmdHi')); //time based expiry
 	// store challenge token to session
 	$_SESSION["ctoken"]= $ctoken;
 	
@@ -176,17 +174,6 @@ function checkDataSignature($submitteddatasig, $datafile) {
 	
 	return false;
 }
-/*
-function testChallengeKey($submittedkey, $sharedsecret){
-	$ckey = hash("sha256", $sharedsecret . hash("sha256", getIterator() . gmdate('YmdHi'))); //valid now
-	$ckey2 = hash("sha256", $sharedsecret . hash("sha256", getIterator() . gmdate('YmdHi', (time()-60)))); //valid 1 min ago
-
-	if($ckey === $submittedkey || $ckey2 === $submittedkey){
-		return true;
-	}
-	return false;
-}
-*/
 
 if($_SERVER['REQUEST_METHOD'] == 'GET') {
 	
