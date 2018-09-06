@@ -1,3 +1,4 @@
+
 # TW Receiver
 
 ## About
@@ -8,7 +9,7 @@ A TiddlyWiki plugin used for saving to a PHP based server.
  - Challenge Digest Authentication (enhanced security)
  -- This simple mechanism avoids passing the password in plain text. Instead the server is queried for a challenge token and that token is then combined with the password to form a new string that is both unique and temporary.
  - Data Integrity Signing (enhanced security)
- -- This practice creates a unique signature of the wiki text with the secret key. Checking the validity of this signature ensures the integrity of the wiki data and helps  prevent tampering in transit.
+ -- This practice creates a unique signature of the wiki text with the secret key. Checking the validity of this signature ensures the integrity of the wiki data and helps prevent tampering in transit.
 
 #### A note on Security
 There is no way to securely transmit over HTTP. Using HTTP your password and content can be viewed and changed. Use of HTTPS (TLS) is strongly recommended.
@@ -21,8 +22,9 @@ Try out HTTPS, check out https://letsencrypt.org/
  1. **Tools > Import** the **plugin_sendwheel_tw-receiver.json** file into your wiki
  2. Save and refresh your wiki
  3. Enable the plugin in **Control Panel > Saving > TW Receiver** 
- 4. place the **tw-receiver-server.php** file in the same directory as your wiki.html on the server
- 5. Set a strong secure key (password) in plugin and on server
+ 4. and set a strong secret key (password)
+ 5. place the **tw-receiver-server.php** file in the same directory as your wiki.html on the server
+ 6. Set **$userpassword** on line 20 to the same secret key you used on the plugin screen in step 4
 
 You will likely have to make server side adjustments; things like setting directory permissions or ini configurations like max upload sizes. See Environment Tests for help.
 
@@ -30,9 +32,12 @@ You will likely have to make server side adjustments; things like setting direct
 Accessing tw-receiver-server.php directly will perform some access and configuration tests and report. 
 For example `https://example.com/tw-receiver-server.php`
 
-#### Usage
+#### Notes
  - Most of the default settings can and likely should be used. The security enhancements of this plugin can be disabled, but have minimal cost to use.
- - While the secret key can be stored directly in the tw-receiver-server.php file, it is a better practice to use an external ini. This requires placing the ini in a **non** web accessible folder outside of the web root, and setting it's path in $extSecKeyPath. This is disabled by default only because not setting this up correctly is worse than not using it at all.
+ - While a password can be stored directly in the tw-receiver-server.php file, it is a better practice to use an external ini. This requires placing the ini in a **non** web accessible folder outside of the web root, and setting it's path in $extSecKeyPath. This is disabled by default only because not setting this up correctly is worse than not using it at all. Using this replaces the use of $userpassword.
+
+#### Requirements
+ - PHP >= 7
 
 ## Contributing
 If you want to contribute to this plugin in any way or want to report any security issues, please do.
