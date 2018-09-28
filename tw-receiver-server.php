@@ -1,4 +1,14 @@
 <?php
+// set a strong secret key. 
+// Set the same secret inside the plugin UI (Control Panel > Saving > TW Receiver)
+$userpassword = "hello i'm a short friendly password"; 
+
+
+// ----
+// No Further Changes Needed beyond this point
+// Set $debug = false; once you have everything working
+// ----
+
 // during initial setup set $debug = true
 // accessing tw-receiver-server.php directly (GET Request) will perform some access and configuration tests and report
 // if this is off, most error reporting is disabled throughout
@@ -17,7 +27,6 @@ $backupcount = 10;
 // instead set $extSecKeyPath = false and use the $password variable
 // wherever you set the password, have fun with it and make it a long list of words
 $extSecKeyPath = false; 
-$userpassword = "hello i'm a short friendly password"; 
 
 // there's no way to securely transmit over HTTP. Using HTTP your password and content can be viewed and changed
 // use of HTTPS (TLS) is strongly recommended.
