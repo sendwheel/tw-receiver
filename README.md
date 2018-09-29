@@ -6,6 +6,9 @@ A TiddlyWiki plugin used for saving to a PHP based server.
 
 ### Features
  - Simple automated backups
+ -- Backup a definable number of wiki copies with time-stamps. Useful to review an old version, or to back out of a corrupt wiki.
+ - Stale Instance Overwrite Protection
+ -- This ensures the wiki you're working on isn't out of date with the server before saving changes. It avoids a scenario where changes made earlier in another window were not loaded into the current instance of the wiki and would be lost by overwrite.
  - Challenge Digest Authentication (enhanced security)
  -- This simple mechanism avoids passing the password in plain text. Instead the server is queried for a challenge token and that token is then combined with the password to form a new string that is both unique and temporary.
  - Data Integrity Signing (enhanced security)
