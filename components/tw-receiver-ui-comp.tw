@@ -1,7 +1,7 @@
 TW Receiver uploads this wiki to a web server, saving the current state
-<div style="width:200px;">
+<div style="width:160px;">
 
-|Enable |<$checkbox tiddler="$:/tw-receiver-enabled" field="text" checked="yes" unchecked="no" default="no"/> |
+|''Enable'' |<$checkbox tiddler="$:/tw-receiver-enabled" field="text" checked="yes" unchecked="no" default="no"/> |
 
 </div>
 <div style="width:60%">
@@ -12,9 +12,20 @@ TW Receiver uploads this wiki to a web server, saving the current state
 
 </div>
 
+<div style="width:60%">
+<fieldset>
+    <legend>Options:</legend>
+
+<$checkbox tiddler="$:/tw-receiver-stalecheck" field="text" checked="yes" unchecked="no" default="yes"/> Stale Overwrite Protection <br />
+<$checkbox tiddler="$:/tw-receiver-signdata" field="text" checked="yes" unchecked="no" default="yes"/> Signed Data Integrity <br />
+<$checkbox tiddler="$:/tw-receiver-cdauthentication" field="text" checked="yes" unchecked="no" default="yes"/> Challenge Digest Authentication <br />
+
+</fieldset>
+</div>
+
 """
 
 ''Tips:''
 - There is no secure way to transmit information over an HTTP connection. Anything transmitted this way is observable and can be manipulated. It is worthwhile to use an HTTPS (TLS) connection to the server.
-- Typically the tw-receiver-server.php file is in the same directory as the wiki html file. In that case the default Server:tw-receiver-server.php can be used.
+- Typically the tw-receiver-server.php file is in the same directory as the wiki html file. In that case the default "Server URL:tw-receiver-server.php" can be used.
 """

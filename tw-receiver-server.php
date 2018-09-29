@@ -3,6 +3,7 @@
 // Set the same secret inside the plugin UI (Control Panel > Saving > TW Receiver)
 $userpassword = "hello i'm a short friendly password"; 
 
+//version 0.2
 
 // ----
 // No Further Changes Needed beyond this point
@@ -39,6 +40,11 @@ $challengeDigestAuthentication = true;
 // this creates a unique signature of the wiki text with the secret key being passed in
 // checking the validity of this signature helps to prevent tampering of the payload mid stream
 $dataIntegritySigning = true;
+
+// enable overwrite protection in case of stale instance
+// this prevents saving changes that are create in an out-of-sync wiki
+// eg. changes made in another window and making changes in current window without a refresh
+$staleCheck = true;
 
 
 function processPostParams($poststring, $delim_major = '&', $delim_minor = '='){
@@ -184,6 +190,18 @@ function checkDataSignature($submitteddatasig, $datafile) {
 	return false;
 }
 
+function checkStaleState($submittedhash, $datafile) {
+	$textdata = file_get_contents($datafile);
+	$existinghash = hash("sha256", $textdata);
+
+	// if stale hash matches whats already here, then we are safe to overwrite
+	if(trim($submittedhash) == $existinghash) {
+		return true;
+	}
+	
+	return false;
+}
+
 if($_SERVER['REQUEST_METHOD'] == 'GET') {
 	
 	// logic to return challenge token 
@@ -253,6 +271,10 @@ if($_SERVER['REQUEST_METHOD'] == 'GET') {
 	<td>check data integrity signature</td>
 	<td><?php echo ($dataIntegritySigning)?'YES':'NO' ?></td>
 </tr>
+<tr>
+	<td>check stale overwrite protection</td>
+	<td><?php echo ($staleCheck)?'YES':'NO' ?></td>
+</tr>
 </table>
 
 <br /><b>Notes:</b>
@@ -303,6 +325,20 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
 	// not interested in file types other than html
 	if($file_extension != "html" && $file_extension != "htm") {
 		failWithMsg('Server Error: Bad File Extension');
+	}
+	
+	// if staleCheck, overwrite protection is on
+	if($staleCheck) {
+		if(isset($postparameters['stalehash']) && $postparameters['stalehash'] != ""){
+			if(file_exists($destinationfile)) {
+				if(!checkStaleState($postparameters['stalehash'], $destinationfile)){
+					failWithMsg('Server Error: Overwrite Protection: Have you made wiki changes in another window?');
+				}
+			}
+		}
+		else {
+			failWithMsg('Server Error: Overwrite Protection Missing Stale Data Hash');
+		}
 	}
 	
 	// if file already exists, backup

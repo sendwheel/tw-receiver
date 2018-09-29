@@ -13,6 +13,12 @@ Handles saving wiki via POST to server storage
 /*global $tw: false */
 "use strict";
 
+// helper function returns a sha256 hex digest using the sjcl lib
+var getSHA256 = function(data) {
+	var sjcl = $tw.node ? (global.sjcl || require("./sjcl.js")) : window.sjcl;
+	return sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(data))
+}
+
 /*
 Create a saver module
 */
@@ -32,8 +38,18 @@ ReceiverSaver.prototype.save = function(text,method,callback) {
 	var seckey = $tw.utils.getPassword("tw-receiver-seckey"); //reminder: this util uses html5.localStorage (secvio)
 	var wikiname = $tw.wiki.getTextReference("$:/tw-receiver-wikiname");
 	var serverurl = $tw.wiki.getTextReference("$:/tw-receiver-serverurl");
-	var cdauthentication = true;
-	var signdata = true;
+	var cdauthentication = true; //challenge digest auth
+	var signdata = true; //integrity check
+	var stalecheck = true; //overwrite stale instance check 
+	
+	// enable/disable based on ui setting
+	if($tw.wiki.getTextReference("$:/tw-receiver-stalecheck") == "no") {
+		stalecheck = false;
+	}
+	
+	if($tw.wiki.getTextReference("$:/tw-receiver-signdata") == "no") {
+		signdata = false;
+	}
 	
 	// if we're not provided a filename, try to get the name of the wiki from the URL
 	if(!wikiname) {
@@ -83,7 +99,7 @@ ReceiverSaver.prototype.save = function(text,method,callback) {
 		var boundary = "-------" + "81fd830c85363675edb98d2879916d8c";	
 		var header = [];
 		header.push("--" + boundary + "\r\nContent-disposition: form-data; name=\"twreceiverparams\"\r\n");
-		header.push("seckey=" + seckey + "&wikiname=" + wikiname + "&datasig=" + datasig); 
+		header.push("seckey=" + seckey + "&wikiname=" + wikiname + "&datasig=" + datasig + "&stalehash=" + stalehash); 
 		header.push("\r\n" + "--" + boundary);
 		header.push("Content-disposition: form-data; name=\"userfile\"; filename=\"" + wikiname + "\"");
 		header.push("Content-Type: text/html;charset=UTF-8");
@@ -100,6 +116,10 @@ ReceiverSaver.prototype.save = function(text,method,callback) {
 			if(http.readyState == 4 && http.status == 200) {
 				if(http.responseText.substr(0,8) === "000 - ok") {
 					callback(null);
+					if(stalecheck) {
+						// update stale hash to current
+						$tw.wiki.setTextReference('$:/temp/tw-receiver-stalehash',getSHA256(text));
+					}
 				} else {
 					callback("Error:\n" + http.responseText);
 				}
@@ -116,6 +136,13 @@ ReceiverSaver.prototype.save = function(text,method,callback) {
 	var datasig = "";
 	if(signdata){
 		datasig = getSHA256(text+seckey);
+	}
+	
+	// if stalecheck is enabled, grab the stale hash
+	// send this to the server for comparison
+	var stalehash = "";
+	if(stalecheck){
+		stalehash = $tw.wiki.getTextReference("$:/temp/tw-receiver-stalehash");
 	}
 	
 	// cdauthentication mode check
@@ -160,6 +187,14 @@ Static method that returns true if this saver is capable of working
 Called onload (wiki start) to enable this saver, requires refresh to change
 */
 exports.canSave = function(wiki) {
+	// stale check calculation
+	// we call this here because we want the value at startup
+	if($tw.wiki.getTextReference("$:/tw-receiver-stalecheck") == "yes") {
+		var data = wiki.wiki.renderTiddler("text/plain","$:/core/save/all"); 
+		$tw.wiki.setTextReference('$:/temp/tw-receiver-stalehash',getSHA256(data));
+	}
+	
+	// return true regardless
 	return true;
 };
 
