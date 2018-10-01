@@ -3,7 +3,7 @@
 // Set the same secret inside the plugin UI (Control Panel > Saving > TW Receiver)
 $userpassword = "hello i'm a short friendly password"; 
 
-//version 0.2
+//version 0.0.3
 
 // ----
 // No Further Changes Needed beyond this point
@@ -44,6 +44,7 @@ $dataIntegritySigning = true;
 // enable overwrite protection in case of stale instance
 // this prevents saving changes that are create in an out-of-sync wiki
 // eg. changes made in another window and making changes in current window without a refresh
+// even if set to true, it will allow blank hashes as an overide 
 $staleCheck = true;
 
 
@@ -52,7 +53,7 @@ function processPostParams($poststring, $delim_major = '&', $delim_minor = '='){
 	
 	foreach (explode($delim_major,$poststring) as $value) {
 		$minorsplit = explode($delim_minor, $value);
-		$return_arr[$minorsplit[0]] = $minorsplit[1];
+		$return_arr[$minorsplit[0]] = trim($minorsplit[1]);
 	}
 	
 	return $return_arr;
@@ -195,7 +196,8 @@ function checkStaleState($submittedhash, $datafile) {
 	$existinghash = hash("sha256", $textdata);
 
 	// if stale hash matches whats already here, then we are safe to overwrite
-	if(trim($submittedhash) == $existinghash) {
+	// if submitted hash is blank, then this feature is disabled
+	if(trim($submittedhash) == $existinghash || $submittedhash == "") {
 		return true;
 	}
 	
@@ -329,7 +331,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
 	
 	// if staleCheck, overwrite protection is on
 	if($staleCheck) {
-		if(isset($postparameters['stalehash']) && $postparameters['stalehash'] != ""){
+		if(isset($postparameters['stalehash']) && trim($postparameters['stalehash']) != ""){
 			if(file_exists($destinationfile)) {
 				if(!checkStaleState($postparameters['stalehash'], $destinationfile)){
 					failWithMsg('Server Error: Overwrite Protection: Have you made wiki changes in another window?');
