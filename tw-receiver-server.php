@@ -3,7 +3,7 @@
 // Set the same secret inside the plugin UI (Control Panel > Saving > TW Receiver)
 $userpassword = "hello i'm a short friendly password"; 
 
-//version 0.0.3
+//version 0.0.4
 
 // ----
 // No Further Changes Needed beyond this point
@@ -44,8 +44,8 @@ $dataIntegritySigning = true;
 // enable overwrite protection in case of stale instance
 // this prevents saving changes that are create in an out-of-sync wiki
 // eg. changes made in another window and making changes in current window without a refresh
-// even if set to true, it will allow blank hashes as an overide 
-$staleCheck = true;
+// even if set to true, it will allow 0 as an overide. We do this for ease of client side disable 
+$staleCheck = false;
 
 
 function processPostParams($poststring, $delim_major = '&', $delim_minor = '='){
@@ -329,8 +329,8 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
 		failWithMsg('Server Error: Bad File Extension');
 	}
 	
-	// if staleCheck, overwrite protection is on
-	if($staleCheck) {
+	// if staleCheck, overwrite protection is on or if 0 is passed from client
+	if($staleCheck && $postparameters['stalehash'] != 0) {
 		if(isset($postparameters['stalehash']) && trim($postparameters['stalehash']) != ""){
 			if(file_exists($destinationfile)) {
 				if(!checkStaleState($postparameters['stalehash'], $destinationfile)){

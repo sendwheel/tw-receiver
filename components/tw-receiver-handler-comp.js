@@ -40,11 +40,11 @@ ReceiverSaver.prototype.save = function(text,method,callback) {
 	var serverurl = $tw.wiki.getTextReference("$:/tw-receiver-serverurl");
 	var cdauthentication = true; //challenge digest auth
 	var signdata = true; //integrity check
-	var stalecheck = true; //overwrite stale instance check 
+	var stalecheck = false; //overwrite stale instance check 
 	
 	// enable/disable based on ui setting
-	if($tw.wiki.getTextReference("$:/tw-receiver-stalecheck") == "no") {
-		stalecheck = false;
+	if($tw.wiki.getTextReference("$:/tw-receiver-stalecheck") == "yes") {
+		stalecheck = true;
 	}
 	
 	if($tw.wiki.getTextReference("$:/tw-receiver-signdata") == "no") {
@@ -138,9 +138,9 @@ ReceiverSaver.prototype.save = function(text,method,callback) {
 		datasig = getSHA256(text+seckey);
 	}
 	
-	// if stalecheck is enabled, grab the stale hash
+	// if stalecheck is enabled, grab the stale hash. Otherwise set to 0 for disabled
 	// send this to the server for comparison
-	var stalehash = "";
+	var stalehash = "0";
 	if(stalecheck){
 		stalehash = $tw.wiki.getTextReference("$:/temp/tw-receiver-stalehash");
 	}

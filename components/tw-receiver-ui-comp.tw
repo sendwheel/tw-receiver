@@ -16,7 +16,7 @@ TW Receiver uploads this wiki to a web server, saving the current state
 <fieldset>
     <legend>Options:</legend>
 
-<$checkbox tiddler="$:/tw-receiver-stalecheck" field="text" checked="yes" unchecked="no" default="yes"/> Stale Overwrite Protection <br />
+<$checkbox tiddler="$:/tw-receiver-stalecheck" field="text" checked="yes" unchecked="no" default="no"/> Stale Overwrite Protection <br />
 <$checkbox tiddler="$:/tw-receiver-signdata" field="text" checked="yes" unchecked="no" default="yes"/> Signed Data Integrity <br />
 <$checkbox tiddler="$:/tw-receiver-cdauthentication" field="text" checked="yes" unchecked="no" default="yes"/> Challenge Digest Authentication <br />
 
