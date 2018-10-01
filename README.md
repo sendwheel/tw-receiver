@@ -31,19 +31,29 @@ Try out HTTPS, check out https://letsencrypt.org/
 
 You will likely have to make server side adjustments; things like setting directory permissions or ini configurations like max upload sizes. See Environment Tests for help.
 
-#### Environment Tests
-Accessing tw-receiver-server.php directly will perform some access and configuration tests and report. 
-For example `https://example.com/tw-receiver-server.php`
-
 #### Notes
  - Most of the default settings can and likely should be used. The security enhancements of this plugin can be disabled, but have minimal cost to use.
  - While a password can be stored directly in the tw-receiver-server.php file, it is a better practice to use an external ini. This requires placing the ini in a **non** web accessible folder outside of the web root, and setting it's path in $extSecKeyPath. This is disabled by default only because not setting this up correctly is worse than not using it at all. Using this replaces the use of $userpassword.
 
-#### Requirements
+### Usage
+#### Environment Tests
+Accessing tw-receiver-server.php directly will perform some access and configuration tests and report. 
+For example `https://example.com/tw-receiver-server.php`
+
+#### Stale Overwrite Protection Configuration
+If enabling this on an existing installation, some additional steps are required. These steps can be ignored for new installations.
+1. On the server side in the tw-receiver-server.php file, set staleCheck=false
+2. Enable "Static Overwrite Protection" client side with checkbox in the UI
+3. Save and reload the wiki
+4. Now set staleCheck=true in the tw-receiver-server.php file server side.
+5. Stale Overwrite Protection is now successfully configured and operational
+
+
+### Requirements
  - PHP >= 7
 
 ## Contributing
-If you want to contribute to this plugin in any way or want to report any security issues, please do.
+If you want to contribute to this plugin in any way or want to report any issues, please do.
 
 ### Credits
 Client side components partially based on the [upload.js](https://github.com/Jermolene/TiddlyWiki5/blob/master/core/modules/savers/upload.js) core module which was based on work by [bidix](https://github.com/tobibeer/bidix). 
