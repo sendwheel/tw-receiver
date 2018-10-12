@@ -189,10 +189,8 @@ Called onload (wiki start) to enable this saver, requires refresh to change
 exports.canSave = function(wiki) {
 	// stale check calculation
 	// we call this here because we want the value at startup
-	if($tw.wiki.getTextReference("$:/tw-receiver-stalecheck") == "yes") {
-		var data = wiki.wiki.renderTiddler("text/plain","$:/core/save/all"); 
-		$tw.wiki.setTextReference('$:/temp/tw-receiver-stalehash',getSHA256(data));
-	}
+	var data = wiki.wiki.renderTiddler("text/plain","$:/core/save/all"); 
+	$tw.wiki.setTextReference('$:/temp/tw-receiver-stalehash',getSHA256(data));
 	
 	// return true regardless
 	return true;
