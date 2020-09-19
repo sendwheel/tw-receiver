@@ -43,7 +43,7 @@ For example `https://example.com/tw-receiver-server.php`
 #### Stale Overwrite Protection Configuration
 If enabling this on an existing installation, some additional steps are required. These steps can be ignored for new installations.
 1. On the server side in the tw-receiver-server.php file, set staleCheck=false
-2. Enable "Static Overwrite Protection" client side with checkbox in the UI
+2. Enable "Stale Overwrite Protection" client side with checkbox in the UI
 3. Save and reload the wiki
 4. Now set staleCheck=true in the tw-receiver-server.php file server side.
 5. Stale Overwrite Protection is now successfully configured and operational
