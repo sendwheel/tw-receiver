@@ -3,7 +3,7 @@
 // Set the same secret inside the plugin UI (Control Panel > Saving > TW Receiver)
 $userpassword = "hello i'm a short friendly password"; 
 
-//version 0.0.5
+//version 0.0.6
 
 // ----
 // No Further Changes Needed beyond this point
@@ -108,6 +108,9 @@ function performBackup($currentfile){
 			unset($dircontents[$key]);
 		}
 	}
+	
+	//re-index sparse array
+	$dircontents = array_values($dircontents);
 
 	if(count($dircontents) < $backupcount){
 		return true; //no prune required
