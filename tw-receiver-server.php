@@ -52,7 +52,7 @@ $staleCheck = false;
 // if "true", removal affect only to files named like the current wiki
 // with that, each wiki uses its own quantity of backups defined by $backupcount
 // there is a chance to litter the backup dir, because every different wiki stays untouched
-$pruneExactMatching = true;
+$pruneExactMatching = false;
 
 
 function processPostParams($poststring, $delim_major = '&', $delim_minor = '='){
