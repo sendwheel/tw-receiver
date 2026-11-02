@@ -3,7 +3,7 @@
 // Set the same secret inside the plugin UI (Control Panel > Saving > TW Receiver)
 $userpassword = "hello i'm a short friendly password"; 
 
-//version 0.0.6
+//version 0.0.7
 
 // ----
 // No Further Changes Needed beyond this point
@@ -47,6 +47,13 @@ $dataIntegritySigning = true;
 // even if set to true, it will allow 0 as an overide. We do this for ease of client side disable 
 $staleCheck = false;
 
+// this allows to store multiple wikis in the backup folder, assuming different names
+// if "false", only the desired copys of the wiki will stay, all other files are removed
+// if "true", removal affect only to files named like the current wiki
+// with that, each wiki uses its own quantity of backups defined by $backupcount
+// there is a chance to litter the backup dir, because every different wiki stays untouched
+$pruneExactMatching = false;
+
 
 function processPostParams($poststring, $delim_major = '&', $delim_minor = '='){
 	$return_arr = [];
@@ -70,7 +77,7 @@ function failWithMsg($msg){
 }
 
 function performBackup($currentfile){
-	global $backupdir, $backupcount;
+	global $backupdir, $backupcount, $pruneExactMatching;
 	
 	// check that backups are enabled
 	if(!$backupdir){
@@ -106,6 +113,16 @@ function performBackup($currentfile){
 	foreach ($dircontents as $key => $val) {
 		if(is_dir($backupdir.'/'.$val)){
 			unset($dircontents[$key]);
+		}
+	}
+
+	// ignore all files different from the current wiki file by removing from array
+	if ($pruneExactMatching) {
+		$regexpPattern = '/^' . preg_quote($filenameparts['filename'], '/') . '\.[0-9]+\.html?$/';
+		foreach ($dircontents as $key => $val) {
+			if (preg_match($regexpPattern, $val) === 0) {
+				unset($dircontents[$key]);
+			}
 		}
 	}
 	
